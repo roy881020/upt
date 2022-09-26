@@ -212,12 +212,26 @@ class InteractionHead(nn.Module):
         self.object_class_to_target_class = object_class_to_target_class
 
         # Map spatial encodings to the same dimension as appearance features
+        # self.spatial_head = nn.Sequential(
+        #     nn.Linear(36, 128),
+        #     nn.ReLU(),
+        #     nn.Linear(128, 256),
+        #     nn.ReLU(),
+        #     nn.Linear(256, representation_size),
+        #     nn.ReLU(),
+        # )
         self.spatial_head = nn.Sequential(
             nn.Linear(36, 128),
             nn.ReLU(),
             nn.Linear(128, 256),
             nn.ReLU(),
-            nn.Linear(256, representation_size),
+            nn.Linear(256, 512),
+            nn.ReLU(),
+            nn.Linear(512, 1024),
+            nn.ReLU(),
+            nn.Linear(1024, 512),
+            nn.ReLU(),
+            nn.Linear(512, representation_size),
             nn.ReLU(),
         )
 
