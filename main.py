@@ -76,6 +76,7 @@ def main(rank, args):
         upt.load_state_dict(checkpoint['model_state_dict'])
     else:
         print(f"=> Rank {rank}: start from a randomly initialised model")
+    #test
 
     engine = CustomisedDLE(
         upt, train_loader,
