@@ -77,6 +77,7 @@ def main(rank, args):
     else:
         print(f"=> Rank {rank}: start from a randomly initialised model")
     #test
+    #git pull test
 
     engine = CustomisedDLE(
         upt, train_loader,
