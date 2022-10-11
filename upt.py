@@ -21,7 +21,7 @@ from interaction_head import InteractionHead
 
 import sys
 sys.path.append('detr')
-from models import build_model
+from detr.models import build_model # check -> origin : from mofdels import build_model
 from util import box_ops
 from util.misc import nested_tensor_from_tensor_list
 
@@ -80,6 +80,45 @@ class UPT(nn.Module):
 
         self.min_instances = min_instances
         self.max_instances = max_instances
+
+        def CBR2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1, bias=True):
+            layers = []
+            layers += [nn.Conv2d(in_channels=in_channels, out_channels=out_channels,
+                                 kernel_size=kernel_size, stride=stride, padding=padding,bias=bias)]
+            layers += [nn.BatchNorm2d(num_features=out_channels)]
+            layers += [nn.ReLU()]
+
+            cbr = nn.Sequential(*layers)
+
+            return cbr
+        self.dec1_1 = CBR2d(in_channels=2048, out_channels=1024)
+        self.dec1_2 = CBR2d(in_channels=1024, out_channels=512)
+
+        self.unpool1 = nn.ConvTranspose2d(in_channels=512, out_channels= 512, kernel_size=2, stride=2, padding=0, bias=True)
+        self.dec2_1 = CBR2d(in_channels=512, out_channels=256)
+        self.dec2_2 = CBR2d(in_channels=256, out_channels=128)
+
+        self.unpool2 = nn.ConvTranspose2d(in_channels=128, out_channels=128, kernel_size=2, stride=2, padding=0, bias=True)
+        self.dec3_1 = CBR2d(in_channels=128, out_channels=64)
+        self.dec3_2 = CBR2d(in_channels=64, out_channels=32)
+
+        self.unpool3 = nn.ConvTranspose2d(in_channels=32, out_channels=32, kernel_size=2, stride=2, padding=0, bias=True)
+        self.dec4_1 = CBR2d(in_channels=32, out_channels=16)
+
+        self.enc4_1 = CBR2d(in_channels=16, out_channels=32)
+        self.pool3 = nn.MaxPool2d(kernel_size=2)
+
+        self.enc3_1 = CBR2d(in_channels=2 * 32, out_channels= 64)
+        self.enc3_2 = CBR2d(in_channels=64, out_channels=128)
+        self.pool2 = nn.MaxPool2d(kernel_size=2)
+
+        self.enc2_1 = CBR2d(in_channels=2* 128, out_channels= 256)
+        self.enc2_2 = CBR2d(in_channels=256, out_channels=512)
+        self.pool1 = nn.MaxPool2d(kernel_size=2)
+
+        self.enc1_1 = CBR2d(in_channels=2 * 512, out_channels= 1024)
+        self.enc1_2 = CBR2d(in_channels=1024, out_channels=2048)
+
 
     def recover_boxes(self, boxes, size):
         boxes = box_ops.box_cxcywh_to_xyxy(boxes)
@@ -235,9 +274,45 @@ class UPT(nn.Module):
             im.size()[-2:] for im in images
         ], device=images[0].device)
 
+        # print(len(images))
+        # print(images[0].shape)
+        # self.fcn(images[0].unsqueeze(0))
+
         if isinstance(images, (list, torch.Tensor)):
             images = nested_tensor_from_tensor_list(images)
         features, pos = self.detector.backbone(images)
+
+        dec1_1 = self.dec1_1(features[0].tensors)
+        dec1_2 = self.dec1_2(dec1_1)
+        unpool1 = self.unpool1(dec1_2)
+
+        dec2_1 = self.dec2_1(unpool1)
+        dec2_2 = self.dec2_2(dec2_1)
+        unpool2 = self.unpool2(dec2_2)
+
+        dec3_1 = self.dec3_1(unpool2)
+        dec3_2 = self.dec3_2(dec3_1)
+        unpool3 = self.unpool3(dec3_2)
+
+        dec4_1 = self.dec4_1(unpool3)
+        enc4_1 = self.enc4_1(dec4_1)
+
+        pool3 = self.pool3(enc4_1)
+        cat3 = torch.cat((dec3_2, pool3), dim=1)
+        enc3_1 = self.enc3_1(cat3)
+        enc3_2 = self.enc3_2(enc3_1)
+
+        pool2 = self.pool2(enc3_2)
+        cat2 = torch.cat((dec2_2, pool2), dim=1)
+        enc2_1 = self.enc2_1(cat2)
+        enc2_2 = self.enc2_2(enc2_1)
+
+        pool1 = self.pool1(enc2_2)
+        cat1 = torch.cat((dec1_2, pool1), dim=1)
+        enc1_1 = self.enc1_1(cat1)
+        enc1_2 = self.enc1_2(enc1_1)
+
+        features[0].tensors = enc1_2
 
         src, mask = features[-1].decompose()
         assert mask is not None
