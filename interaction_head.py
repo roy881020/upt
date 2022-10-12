@@ -352,50 +352,55 @@ class InteractionHead(nn.Module):
         """
 
         device = features.device
+        # wish to run
+        dec1_1 = self.dec1_1(features)
+        dec1_2 = self.dec1_2(dec1_1)
+        unpool1 = self.unpool1(dec1_2)
 
-        # dec1_1 = self.dec1_1(features)
-        # dec1_2 = self.dec1_2(dec1_1)
-        # unpool1 = self.unpool1(dec1_2)
-        #
-        # dec2_1 = self.dec2_1(unpool1)
-        # dec2_2 = self.dec2_2(dec2_1)
-        # unpool2 = self.unpool2(dec2_2)
-        #
-        # dec3_1 = self.dec3_1(unpool2)
-        # dec3_2 = self.dec3_2(dec3_1)
-        # unpool3 = self.unpool3(dec3_2)
-        #
-        # dec4_1 = self.dec4_1(unpool3)
-        # enc4_1 = self.enc4_1(dec4_1)
-        #
-        # pool3 = self.pool3(enc4_1)
-        # cat3 = torch.cat((dec3_2, pool3), dim=1)
-        # enc3_1 = self.enc3_1(cat3)
-        # enc3_2 = self.enc3_2(enc3_1)
-        #
-        # pool2 = self.pool2(enc3_2)
-        # cat2 = torch.cat((dec2_2, pool2), dim=1)
-        # enc2_1 = self.enc2_1(cat2)
-        # enc2_2 = self.enc2_2(enc2_1)
-        #
-        # pool1 = self.pool1(enc2_2)
-        # cat1 = torch.cat((dec1_2, pool1), dim=1)
-        # enc1_1 = self.enc1_1(cat1)
-        # enc1_2 = self.enc1_2(enc1_1)
-        #
+        dec2_1 = self.dec2_1(unpool1)
+        dec2_2 = self.dec2_2(dec2_1)
+        unpool2 = self.unpool2(dec2_2)
+
+        dec3_1 = self.dec3_1(unpool2)
+        dec3_2 = self.dec3_2(dec3_1)
+        unpool3 = self.unpool3(dec3_2)
+
+        dec4_1 = self.dec4_1(unpool3)
+        enc4_1 = self.enc4_1(dec4_1)
+
+        pool3 = self.pool3(enc4_1)
+        cat3 = torch.cat((dec3_2, pool3), dim=1)
+        enc3_1 = self.enc3_1(cat3)
+        enc3_2 = self.enc3_2(enc3_1)
+
+        pool2 = self.pool2(enc3_2)
+        cat2 = torch.cat((dec2_2, pool2), dim=1)
+        enc2_1 = self.enc2_1(cat2)
+        enc2_2 = self.enc2_2(enc2_1)
+
+        pool1 = self.pool1(enc2_2)
+        cat1 = torch.cat((dec1_2, pool1), dim=1)
+        enc1_1 = self.enc1_1(cat1)
+        enc1_2 = self.enc1_2(enc1_1)
+
         # features = enc1_2
-        dec1 = self.dec1(features)
-        unpool = self.dec1_unpool(dec1)
+        global_features = self.avg_pool(enc1_2).flatten(start_dim=1)
 
-        dec2 = self.dec2(unpool)
-        enc2 = self.enc2(dec2)
+        # # test
+        # dec1 = self.dec1(features)
+        # unpool = self.dec1_unpool(dec1)
+        #
+        # dec2 = self.dec2(unpool)
+        # enc2 = self.enc2(dec2)
+        #
+        # pool = self.enc2_pool(enc2)
+        # cat = torch.cat((pool,dec1), dim=1)
+        #
+        # enc1 = self.enc1(cat)
+        # #features = enc1
+        # global_features = self.avg_pool(enc1).flatten(start_dim=1)
 
-        pool = self.enc2_pool(enc2)
-        cat = torch.cat((pool,dec1), dim=1)
 
-        enc1 = self.enc1(cat)
-        #features = enc1
-        global_features = self.avg_pool(enc1).flatten(start_dim=1)
 
         #global_features = self.avg_pool(features).flatten(start_dim=1)
 
