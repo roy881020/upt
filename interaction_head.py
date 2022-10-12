@@ -295,8 +295,16 @@ class InteractionHead(nn.Module):
 
         self.enc1_1 = CBR2d(in_channels=2 * 512, out_channels= 1024)
         self.enc1_2 = CBR2d(in_channels=1024, out_channels=2048)
+        #test
+        self.dec1 = CBR2d(in_channels=2048, out_channels=1024)
+        self.dec1_unpool = nn.ConvTranspose2d(in_channels=1024, out_channels=1024,kernel_size=2,stride=2,padding=0,bias=True)
 
-        self.test = nn.Conv2d(in_channels=2048, out_channels=2048, kernel_size=3, stride=1, padding=1, bias=True)
+        self.dec2 = CBR2d(in_channels=1024, out_channels=1024)
+        self.enc2 = CBR2d(in_channels=1024, out_channels=1024)
+        self.enc2_pool = nn.MaxPool2d(kernel_size=2)
+
+        self.enc1 = CBR2d(in_channels= 2* 1024, out_channels= 2048)
+
 
     def compute_prior_scores(self,
         x: Tensor, y: Tensor, scores: Tensor, object_class: Tensor
@@ -376,9 +384,20 @@ class InteractionHead(nn.Module):
         # enc1_2 = self.enc1_2(enc1_1)
         #
         # features = enc1_2
-        features = self.test(features)
+        dec1 = self.dec1(features)
+        unpool = self.dec1_unpool(dec1)
 
-        global_features = self.avg_pool(features).flatten(start_dim=1)
+        dec2 = self.dec2(unpool)
+        enc2 = self.enc2(dec2)
+
+        pool = self.enc2_pool(enc2)
+        cat = torch.cat((pool,dec1), dim=1)
+
+        enc1 = self.enc1(cat)
+        #features = enc1
+        global_features = self.avg_pool(enc1).flatten(start_dim=1)
+
+        #global_features = self.avg_pool(features).flatten(start_dim=1)
 
         boxes_h_collated = []; boxes_o_collated = []
         prior_collated = []; object_class_collated = []
