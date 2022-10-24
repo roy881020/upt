@@ -268,34 +268,67 @@ class InteractionHead(nn.Module):
             cbr = nn.Sequential(*layers)
 
             return cbr
-        self.dec1_1 = CBR2d(in_channels=2048, out_channels=1024)
-        self.dec1_2 = CBR2d(in_channels=1024, out_channels=512)
+        # # ver1
+        # self.dec1_1 = CBR2d(in_channels=2048, out_channels=1024)
+        # self.dec1_2 = CBR2d(in_channels=1024, out_channels=512)
+        #
+        # self.unpool1 = nn.ConvTranspose2d(in_channels=512, out_channels= 512, kernel_size=2, stride=2, padding=0, bias=True)
+        # self.dec2_1 = CBR2d(in_channels=512, out_channels=256)
+        # self.dec2_2 = CBR2d(in_channels=256, out_channels=128)
+        #
+        # self.unpool2 = nn.ConvTranspose2d(in_channels=128, out_channels=128, kernel_size=2, stride=2, padding=0, bias=True)
+        # self.dec3_1 = CBR2d(in_channels=128, out_channels=64)
+        # self.dec3_2 = CBR2d(in_channels=64, out_channels=32)
+        #
+        # self.unpool3 = nn.ConvTranspose2d(in_channels=32, out_channels=32, kernel_size=2, stride=2, padding=0, bias=True)
+        # self.dec4_1 = CBR2d(in_channels=32, out_channels=16)
+        #
+        # self.enc4_1 = CBR2d(in_channels=16, out_channels=32)
+        # self.pool3 = nn.MaxPool2d(kernel_size=2)
+        #
+        # self.enc3_1 = CBR2d(in_channels=2 * 32, out_channels= 64)
+        # self.enc3_2 = CBR2d(in_channels=64, out_channels=128)
+        # self.pool2 = nn.MaxPool2d(kernel_size=2)
+        #
+        # self.enc2_1 = CBR2d(in_channels=2* 128, out_channels= 256)
+        # self.enc2_2 = CBR2d(in_channels=256, out_channels=512)
+        # self.pool1 = nn.MaxPool2d(kernel_size=2)
+        #
+        # self.enc1_1 = CBR2d(in_channels=2 * 512, out_channels= 1024)
+        # self.enc1_2 = CBR2d(in_channels=1024, out_channels=2048)
+        # ver 2
+        self.dec1_1 = CBR2d(in_channels=2048, out_channels=2048)
+        self.dec1_2 = CBR2d(in_channels=2048, out_channels=2048)
 
-        self.unpool1 = nn.ConvTranspose2d(in_channels=512, out_channels= 512, kernel_size=2, stride=2, padding=0, bias=True)
-        self.dec2_1 = CBR2d(in_channels=512, out_channels=256)
-        self.dec2_2 = CBR2d(in_channels=256, out_channels=128)
+        self.unpool1 = nn.ConvTranspose2d(in_channels=2048, out_channels=1024, kernel_size=2, stride=2, padding=0,
+                                          bias=True)
+        self.dec2_1 = CBR2d(in_channels=1024, out_channels=1024)
+        self.dec2_2 = CBR2d(in_channels=1024, out_channels=1024)
 
-        self.unpool2 = nn.ConvTranspose2d(in_channels=128, out_channels=128, kernel_size=2, stride=2, padding=0, bias=True)
-        self.dec3_1 = CBR2d(in_channels=128, out_channels=64)
-        self.dec3_2 = CBR2d(in_channels=64, out_channels=32)
+        self.unpool2 = nn.ConvTranspose2d(in_channels=1024, out_channels=512, kernel_size=2, stride=2, padding=0,
+                                          bias=True)
+        self.dec3_1 = CBR2d(in_channels=512, out_channels=512)
+        self.dec3_2 = CBR2d(in_channels=512, out_channels=512)
 
-        self.unpool3 = nn.ConvTranspose2d(in_channels=32, out_channels=32, kernel_size=2, stride=2, padding=0, bias=True)
-        self.dec4_1 = CBR2d(in_channels=32, out_channels=16)
+        self.unpool3 = nn.ConvTranspose2d(in_channels=512, out_channels=256, kernel_size=2, stride=2, padding=0,
+                                          bias=True)
+        self.dec4_1 = CBR2d(in_channels=256, out_channels=256)
 
-        self.enc4_1 = CBR2d(in_channels=16, out_channels=32)
+        self.enc4_1 = CBR2d(in_channels=256, out_channels=256)
         self.pool3 = nn.MaxPool2d(kernel_size=2)
 
-        self.enc3_1 = CBR2d(in_channels=2 * 32, out_channels= 64)
-        self.enc3_2 = CBR2d(in_channels=64, out_channels=128)
+        self.enc3_1 = CBR2d(in_channels=2 * 256, out_channels=512)
+        self.enc3_2 = CBR2d(in_channels=512, out_channels=512)
         self.pool2 = nn.MaxPool2d(kernel_size=2)
 
-        self.enc2_1 = CBR2d(in_channels=2* 128, out_channels= 256)
-        self.enc2_2 = CBR2d(in_channels=256, out_channels=512)
+        self.enc2_1 = CBR2d(in_channels=2 * 512, out_channels=1024)
+        self.enc2_2 = CBR2d(in_channels=1024, out_channels=1024)
         self.pool1 = nn.MaxPool2d(kernel_size=2)
 
-        self.enc1_1 = CBR2d(in_channels=2 * 512, out_channels= 1024)
-        self.enc1_2 = CBR2d(in_channels=1024, out_channels=2048)
-        #test
+        self.enc1_1 = CBR2d(in_channels=2 * 1024, out_channels=2048)
+        self.enc1_2 = CBR2d(in_channels=2048, out_channels=2048)
+
+        # #test
         self.dec1 = CBR2d(in_channels=2048, out_channels=1024)
         self.dec1_unpool = nn.ConvTranspose2d(in_channels=1024, out_channels=1024,kernel_size=2,stride=2,padding=0,bias=True)
 
