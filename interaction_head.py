@@ -298,19 +298,19 @@ class InteractionHead(nn.Module):
         # self.enc1_2 = CBR2d(in_channels=1024, out_channels=2048)
         # ver 2
         self.dec1_1 = CBR2d(in_channels=2048, out_channels=2048)
-        self.dec1_2 = CBR2d(in_channels=2048, out_channels=2048)
+        self.dec1_2 = CBR2d(in_channels=2048, out_channels=1024)
 
-        self.unpool1 = nn.ConvTranspose2d(in_channels=2048, out_channels=1024, kernel_size=2, stride=2, padding=0,
+        self.unpool1 = nn.ConvTranspose2d(in_channels=1024, out_channels=1024, kernel_size=2, stride=2, padding=0,
                                           bias=True)
         self.dec2_1 = CBR2d(in_channels=1024, out_channels=1024)
-        self.dec2_2 = CBR2d(in_channels=1024, out_channels=1024)
+        self.dec2_2 = CBR2d(in_channels=1024, out_channels=512)
 
-        self.unpool2 = nn.ConvTranspose2d(in_channels=1024, out_channels=512, kernel_size=2, stride=2, padding=0,
+        self.unpool2 = nn.ConvTranspose2d(in_channels=512, out_channels=512, kernel_size=2, stride=2, padding=0,
                                           bias=True)
         self.dec3_1 = CBR2d(in_channels=512, out_channels=512)
-        self.dec3_2 = CBR2d(in_channels=512, out_channels=512)
+        self.dec3_2 = CBR2d(in_channels=512, out_channels=256)
 
-        self.unpool3 = nn.ConvTranspose2d(in_channels=512, out_channels=256, kernel_size=2, stride=2, padding=0,
+        self.unpool3 = nn.ConvTranspose2d(in_channels=256, out_channels=256, kernel_size=2, stride=2, padding=0,
                                           bias=True)
         self.dec4_1 = CBR2d(in_channels=256, out_channels=256)
 
