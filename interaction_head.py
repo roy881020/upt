@@ -296,47 +296,65 @@ class InteractionHead(nn.Module):
         #
         # self.enc1_1 = CBR2d(in_channels=2 * 512, out_channels= 1024)
         # self.enc1_2 = CBR2d(in_channels=1024, out_channels=2048)
-        # ver 2
+        # # ver 2
+        # self.dec1_1 = CBR2d(in_channels=2048, out_channels=2048)
+        # self.dec1_2 = CBR2d(in_channels=2048, out_channels=1024)
+        #
+        # self.unpool1 = nn.ConvTranspose2d(in_channels=1024, out_channels=1024, kernel_size=2, stride=2, padding=0,
+        #                                   bias=True)
+        # self.dec2_1 = CBR2d(in_channels=1024, out_channels=1024)
+        # self.dec2_2 = CBR2d(in_channels=1024, out_channels=512)
+        #
+        # self.unpool2 = nn.ConvTranspose2d(in_channels=512, out_channels=512, kernel_size=2, stride=2, padding=0,
+        #                                   bias=True)
+        # self.dec3_1 = CBR2d(in_channels=512, out_channels=512)
+        # self.dec3_2 = CBR2d(in_channels=512, out_channels=256)
+        #
+        # self.unpool3 = nn.ConvTranspose2d(in_channels=256, out_channels=256, kernel_size=2, stride=2, padding=0,
+        #                                   bias=True)
+        # self.dec4_1 = CBR2d(in_channels=256, out_channels=256)
+        #
+        # self.enc4_1 = CBR2d(in_channels=256, out_channels=256)
+        # self.pool3 = nn.MaxPool2d(kernel_size=2)
+        #
+        # self.enc3_1 = CBR2d(in_channels=2 * 256, out_channels=512)
+        # self.enc3_2 = CBR2d(in_channels=512, out_channels=512)
+        # self.pool2 = nn.MaxPool2d(kernel_size=2)
+        #
+        # self.enc2_1 = CBR2d(in_channels=2 * 512, out_channels=1024)
+        # self.enc2_2 = CBR2d(in_channels=1024, out_channels=1024)
+        # self.pool1 = nn.MaxPool2d(kernel_size=2)
+        #
+        # self.enc1_1 = CBR2d(in_channels=2 * 1024, out_channels=2048)
+        # self.enc1_2 = CBR2d(in_channels=2048, out_channels=2048)
+
+        # ver3
         self.dec1_1 = CBR2d(in_channels=2048, out_channels=2048)
         self.dec1_2 = CBR2d(in_channels=2048, out_channels=1024)
 
         self.unpool1 = nn.ConvTranspose2d(in_channels=1024, out_channels=1024, kernel_size=2, stride=2, padding=0,
                                           bias=True)
-        self.dec2_1 = CBR2d(in_channels=1024, out_channels=1024)
-        self.dec2_2 = CBR2d(in_channels=1024, out_channels=512)
 
-        self.unpool2 = nn.ConvTranspose2d(in_channels=512, out_channels=512, kernel_size=2, stride=2, padding=0,
-                                          bias=True)
-        self.dec3_1 = CBR2d(in_channels=512, out_channels=512)
-        self.dec3_2 = CBR2d(in_channels=512, out_channels=256)
+        self.dec2_1 = CBR2d(in_channels=1024, out_channels=512)
+        self.enc2_1 = CBR2d(in_channels=512, out_channels=1024)
 
-        self.unpool3 = nn.ConvTranspose2d(in_channels=256, out_channels=256, kernel_size=2, stride=2, padding=0,
-                                          bias=True)
-        self.dec4_1 = CBR2d(in_channels=256, out_channels=256)
-
-        self.enc4_1 = CBR2d(in_channels=256, out_channels=256)
-        self.pool3 = nn.MaxPool2d(kernel_size=2)
-
-        self.enc3_1 = CBR2d(in_channels=2 * 256, out_channels=512)
-        self.enc3_2 = CBR2d(in_channels=512, out_channels=512)
-        self.pool2 = nn.MaxPool2d(kernel_size=2)
-
-        self.enc2_1 = CBR2d(in_channels=2 * 512, out_channels=1024)
-        self.enc2_2 = CBR2d(in_channels=1024, out_channels=1024)
         self.pool1 = nn.MaxPool2d(kernel_size=2)
 
-        self.enc1_1 = CBR2d(in_channels=2 * 1024, out_channels=2048)
+        self.enc1_1 = CBR2d(in_channels= 2 * 1024, out_channels=2048)
         self.enc1_2 = CBR2d(in_channels=2048, out_channels=2048)
 
-        # #test
-        self.dec1 = CBR2d(in_channels=2048, out_channels=1024)
-        self.dec1_unpool = nn.ConvTranspose2d(in_channels=1024, out_channels=1024,kernel_size=2,stride=2,padding=0,bias=True)
 
-        self.dec2 = CBR2d(in_channels=1024, out_channels=1024)
-        self.enc2 = CBR2d(in_channels=1024, out_channels=1024)
-        self.enc2_pool = nn.MaxPool2d(kernel_size=2)
 
-        self.enc1 = CBR2d(in_channels= 2* 1024, out_channels= 2048)
+
+        # # #test
+        # self.dec1 = CBR2d(in_channels=2048, out_channels=1024)
+        # self.dec1_unpool = nn.ConvTranspose2d(in_channels=1024, out_channels=1024,kernel_size=2,stride=2,padding=0,bias=True)
+        #
+        # self.dec2 = CBR2d(in_channels=1024, out_channels=1024)
+        # self.enc2 = CBR2d(in_channels=1024, out_channels=1024)
+        # self.enc2_pool = nn.MaxPool2d(kernel_size=2)
+        #
+        # self.enc1 = CBR2d(in_channels= 2* 1024, out_channels= 2048)
 
 
     def compute_prior_scores(self,
@@ -385,34 +403,48 @@ class InteractionHead(nn.Module):
         """
 
         device = features.device
-        # wish to run
+        # # wish to run(ver2)
+        # dec1_1 = self.dec1_1(features)
+        # dec1_2 = self.dec1_2(dec1_1)
+        # unpool1 = self.unpool1(dec1_2)
+        #
+        # dec2_1 = self.dec2_1(unpool1)
+        # dec2_2 = self.dec2_2(dec2_1)
+        # unpool2 = self.unpool2(dec2_2)
+        #
+        # dec3_1 = self.dec3_1(unpool2)
+        # dec3_2 = self.dec3_2(dec3_1)
+        # unpool3 = self.unpool3(dec3_2)
+        #
+        # dec4_1 = self.dec4_1(unpool3)
+        # enc4_1 = self.enc4_1(dec4_1)
+        #
+        # pool3 = self.pool3(enc4_1)
+        # cat3 = torch.cat((dec3_2, pool3), dim=1)
+        # enc3_1 = self.enc3_1(cat3)
+        # enc3_2 = self.enc3_2(enc3_1)
+        #
+        # pool2 = self.pool2(enc3_2)
+        # cat2 = torch.cat((dec2_2, pool2), dim=1)
+        # enc2_1 = self.enc2_1(cat2)
+        # enc2_2 = self.enc2_2(enc2_1)
+        #
+        # pool1 = self.pool1(enc2_2)
+        # cat1 = torch.cat((dec1_2, pool1), dim=1)
+        # enc1_1 = self.enc1_1(cat1)
+        # enc1_2 = self.enc1_2(enc1_1)
+
+        # ver3
         dec1_1 = self.dec1_1(features)
         dec1_2 = self.dec1_2(dec1_1)
         unpool1 = self.unpool1(dec1_2)
 
         dec2_1 = self.dec2_1(unpool1)
-        dec2_2 = self.dec2_2(dec2_1)
-        unpool2 = self.unpool2(dec2_2)
+        enc2_1 = self.enc2_1(dec2_1)
 
-        dec3_1 = self.dec3_1(unpool2)
-        dec3_2 = self.dec3_2(dec3_1)
-        unpool3 = self.unpool3(dec3_2)
-
-        dec4_1 = self.dec4_1(unpool3)
-        enc4_1 = self.enc4_1(dec4_1)
-
-        pool3 = self.pool3(enc4_1)
-        cat3 = torch.cat((dec3_2, pool3), dim=1)
-        enc3_1 = self.enc3_1(cat3)
-        enc3_2 = self.enc3_2(enc3_1)
-
-        pool2 = self.pool2(enc3_2)
-        cat2 = torch.cat((dec2_2, pool2), dim=1)
-        enc2_1 = self.enc2_1(cat2)
-        enc2_2 = self.enc2_2(enc2_1)
-
-        pool1 = self.pool1(enc2_2)
+        pool1 = self.pool1(enc2_1)
         cat1 = torch.cat((dec1_2, pool1), dim=1)
+
         enc1_1 = self.enc1_1(cat1)
         enc1_2 = self.enc1_2(enc1_1)
 
