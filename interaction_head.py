@@ -212,28 +212,28 @@ class InteractionHead(nn.Module):
         self.object_class_to_target_class = object_class_to_target_class
 
         # Map spatial encodings to the same dimension as appearance features
-        # self.spatial_head = nn.Sequential(
-        #     nn.Linear(36, 128),
-        #     nn.ReLU(),
-        #     nn.Linear(128, 256),
-        #     nn.ReLU(),
-        #     nn.Linear(256, representation_size),
-        #     nn.ReLU(),
-        # )
         self.spatial_head = nn.Sequential(
             nn.Linear(36, 128),
             nn.ReLU(),
             nn.Linear(128, 256),
             nn.ReLU(),
-            nn.Linear(256, 512),
-            nn.ReLU(),
-            nn.Linear(512, 1024),
-            nn.ReLU(),
-            nn.Linear(1024, 512),
-            nn.ReLU(),
-            nn.Linear(512, representation_size),
+            nn.Linear(256, representation_size),
             nn.ReLU(),
         )
+        # self.spatial_head = nn.Sequential(
+        #     nn.Linear(36, 128),
+        #     nn.ReLU(),
+        #     nn.Linear(128, 256),
+        #     nn.ReLU(),
+        #     nn.Linear(256, 512),
+        #     nn.ReLU(),
+        #     nn.Linear(512, 1024),
+        #     nn.ReLU(),
+        #     nn.Linear(1024, 512),
+        #     nn.ReLU(),
+        #     nn.Linear(512, representation_size),
+        #     nn.ReLU(),
+        # )
 
         self.coop_layer = ModifiedEncoder(
             hidden_size=hidden_state_size,
@@ -435,21 +435,21 @@ class InteractionHead(nn.Module):
         # enc1_2 = self.enc1_2(enc1_1)
 
         # ver3
-        dec1_1 = self.dec1_1(features)
-        dec1_2 = self.dec1_2(dec1_1)
-        unpool1 = self.unpool1(dec1_2)
-
-        dec2_1 = self.dec2_1(unpool1)
-        enc2_1 = self.enc2_1(dec2_1)
-
-        pool1 = self.pool1(enc2_1)
-        cat1 = torch.cat((dec1_2, pool1), dim=1)
-
-        enc1_1 = self.enc1_1(cat1)
-        enc1_2 = self.enc1_2(enc1_1)
-
-        # features = enc1_2
-        global_features = self.avg_pool(enc1_2).flatten(start_dim=1)
+        # dec1_1 = self.dec1_1(features)
+        # dec1_2 = self.dec1_2(dec1_1)
+        # unpool1 = self.unpool1(dec1_2)
+        #
+        # dec2_1 = self.dec2_1(unpool1)
+        # enc2_1 = self.enc2_1(dec2_1)
+        #
+        # pool1 = self.pool1(enc2_1)
+        # cat1 = torch.cat((dec1_2, pool1), dim=1)
+        #
+        # enc1_1 = self.enc1_1(cat1)
+        # enc1_2 = self.enc1_2(enc1_1)
+        #
+        # # features = enc1_2
+        # global_features = self.avg_pool(enc1_2).flatten(start_dim=1)
 
         # # test
         # dec1 = self.dec1(features)
@@ -467,7 +467,7 @@ class InteractionHead(nn.Module):
 
 
 
-        #global_features = self.avg_pool(features).flatten(start_dim=1)
+        global_features = self.avg_pool(features).flatten(start_dim=1)
 
         boxes_h_collated = []; boxes_o_collated = []
         prior_collated = []; object_class_collated = []
